@@ -2,23 +2,20 @@
 
 {% block body %}
 
+
     {% set columns = [
-        'id',
-        'name',
-        'description',
-        'category',
-        'language',
-        'country',
+        'type',
+        'webTitle',
     ] %}
     <twig:simple_datatables
             perPage="25"
             :caller="_self"
             :columns="columns"
-            :data="sources"
+            :data="tags.results"
     >
-        <twig:block name="name">
-            <a href="{{ row.url }}" target="_blank">
-                {{ row.name }}
+        <twig:block name="webTitle">
+            <a href="{{ row.webUrl }}" target="_blank" title="{{ row.id }}">
+                {{ row.webTitle }}
             </a>
         </twig:block>
 

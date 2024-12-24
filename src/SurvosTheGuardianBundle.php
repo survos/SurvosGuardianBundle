@@ -30,7 +30,7 @@ class SurvosTheGuardianBundle extends AbstractBundle
         $container->services()->alias(TheGuardianService::class, $serviceId);
         $builder->autowire($serviceId, TheGuardianService::class)
             ->setArgument('$apiKey', $config['api_key'])
-            ->setArgument('$config', $config)
+            ->setArgument('$cacheTimeout', $config['cache_timeout'])
             ->setAutoconfigured(true)
             ->setAutowired(true)
             ->setPublic(true);
@@ -55,37 +55,18 @@ class SurvosTheGuardianBundle extends AbstractBundle
 //            ->addTag('twig.extension');
     }
 
-    private function addZonesSection(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('zones')
-            ->arrayPrototype()
-            ->children()
-                ->scalarNode('name')->end()
-                ->scalarNode('id')->end()
-                ->scalarNode('region')->end()
-                ->scalarNode('readonly_password')->end()
-                ->scalarNode('password')->end()
-            ->end()
-            ->end()
-            ->end();
-
-    }
-
     public function configure(DefinitionConfigurator $definition): void
     {
         $rootNode = $definition->rootNode();
         $rootNode
             ->children()
                 ->scalarNode('api_key')->defaultNull()->end()
-                ->scalarNode('storage_zone')->defaultValue(null)->end()
+                ->integerNode('cache_timeout')->defaultValue(3600)->end()
 //                ->scalarNode('region')->defaultValue(null)->end()
 //                ->scalarNode('readonly_password')->defaultValue(null)->end()
 //                ->scalarNode('password')->defaultValue(null)->end()
             ->end();
 
-        $this->addZonesSection($rootNode);
     }
 
 }

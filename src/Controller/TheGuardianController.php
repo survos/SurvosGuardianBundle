@@ -70,13 +70,15 @@ class TheGuardianController extends AbstractController
             // a nice search form
     }
 
-    #[Route('/sources/{language}', name: 'survos_the_guardian_tags', methods: ['GET'])]
+    #[Route('/tags', name: 'survos_guardian_tags', methods: ['GET'])]
     #[Template('@SurvosTheGuardian/tags.html.twig')]
-    public function sources(string $language=null): Response|array
+    public function tags(): Response|array
     {
         $tags  = $this->theGuardianService->tagsApi();
+        $query = $tags->setPageSize(100);
+        $results = $this->theGuardianService->fetch($query);
         return [
-            'tags' => $tags,
+            'tags' => $results,
         ];
     }
 
