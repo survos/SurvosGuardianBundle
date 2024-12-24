@@ -27,17 +27,6 @@ class TheGuardianController extends AbstractController
             throw new \LogicException("This page requires SimpleDatatables\n composer req survos/simple-datatables-bundle");
         }
     }
-    #[Route('/languages', name: 'survos_the_guardian_languages', methods: ['GET'])]
-    #[Template('@SurvosTheGuardian/languages.html.twig')]
-    public function languages(
-    ): Response|array
-    {
-        $languages = $this->theGuardianService->getLanguages();
-        return [
-            'languages' => $languages,
-        ];
-    }
-
     #[Route('/search', name: 'survos_the_guardian_search', methods: ['GET'])]
 //    #[Template('@SurvosTheGuardian/search.html.twig')]
     public function search(
@@ -60,13 +49,15 @@ class TheGuardianController extends AbstractController
             return $redirect;
         }
         if ($q) {
-            $query = $this->theGuardianService->getContentApi()
+            $query = $this->theGuardianService->contentApi()
+                // put the Content methods first
+                ->setQuery($q)
+                ->setQueryFields('headline')
+                // then the ContentAPIEntity methods
                 ->setShowFields('all')
                 ->setOrderBy('newest')
-                ->setQueryFields('')
                 ->setOrderDate('published')
-                ->setQueryFields('headline')
-                ->setQuery($q);
+                ;
             $response = $this->theGuardianService->fetch($query);
         } else {
             $response = null;
@@ -79,14 +70,13 @@ class TheGuardianController extends AbstractController
             // a nice search form
     }
 
-    #[Route('/sources/{language}', name: 'survos_the_guardian_sources', methods: ['GET'])]
-    #[Template('@SurvosTheGuardian/sources.html.twig')]
+    #[Route('/sources/{language}', name: 'survos_the_guardian_tags', methods: ['GET'])]
+    #[Template('@SurvosTheGuardian/tags.html.twig')]
     public function sources(string $language=null): Response|array
     {
-        $this->checkSimpleDatatablesInstalled();
-        $sources  = $this->theGuardianService->getSources($language);
+        $tags  = $this->theGuardianService->tagsApi();
         return [
-            'sources' => $sources,
+            'tags' => $tags,
         ];
     }
 

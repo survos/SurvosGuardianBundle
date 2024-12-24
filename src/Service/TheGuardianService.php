@@ -8,6 +8,7 @@ namespace Survos\TheGuardianBundle\Service;
 
 use Guardian\Entity\Content;
 use Guardian\Entity\ContentAPIEntity;
+use Guardian\Entity\Tags;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -28,17 +29,17 @@ class TheGuardianService
         $this->guardianAPI = new GuardianAPI($this->apiKey);
     }
 
-    public function fetch(ContentAPIEntity $x)
+    public function fetch(ContentAPIEntity $apiEntity)
     {
 
-        $r = new \ReflectionMethod($x, 'buildUrl');
-        $r->setAccessible(true);
-        $url = $r->invoke($x);
+        ($r = new \ReflectionMethod($apiEntity, 'buildUrl'))
+            ->setAccessible(true);
+        $url = $r->invoke($apiEntity);
         $key = hash('xxh3', $url);
-        $response = $this->cache->get($key, function(CacheItem $item) use ($url, $key, $x)
+        $response = $this->cache->get($key, function(CacheItem $item) use ($url, $apiEntity)
         {
-            $item->expiresAfter(60);
-            $results = $x->makeApiCall($url);
+            $item->expiresAfter(600);
+            $results = $apiEntity->makeApiCall($url);
             return json_decode($results)->response;
         } );
         return $response;
@@ -50,10 +51,14 @@ class TheGuardianService
 
     }
 
-    public function getContentApi(): Content
+    public function contentApi(): Content
     {
         return $this->guardianAPI->content();
+    }
 
+    public function tagsApi(): Tags
+    {
+        return $this->guardianAPI->tags();
     }
 
 
