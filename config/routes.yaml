@@ -1,0 +1,5 @@
+survos_the-guardian:
+  type: attribute
+  resource:
+    path: '@SurvosTheGuardianBundle/src/Controller/'
+    namespace: Survos\TheGuardianBundle\Controller
