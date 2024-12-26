@@ -1,0 +1,53 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    {% if searchForm is defined %}
+    {{ form(searchForm) }}
+    {% endif %}
+
+    {{ dump(articles[0]|default('~')) }}
+
+    {% set columns = [
+        'image',
+        'title',
+        'publishedAt',
+        {name: 'dump', condition: app.request.get('debug', false)},
+    ] %}
+{#    {% set articles = [] %}#}
+    <twig:simple_datatables
+            perPage="25"
+            :caller="_self"
+            :columns="columns"
+            :data="articles|default([])"
+    >
+        <twig:block name="image">
+            <img src="{{ row.fields.thumbnail }}" alt="{{ row.id }}" style="max-width: 120px"/>
+        </twig:block>
+        <twig:block name="publishedAt">
+            {% guard filter ago %}
+                {{ row.webPublicationDate|ago }}
+            {% else %}
+                install timeago!
+                {{ row.webPublicationDate }}
+            {% endguard %}
+        </twig:block>
+        <twig:block name="dump">
+            {% guard function dump %}
+            {{ dump(row) }}
+            {% else %}
+                <pre>{{ row|json_encode }}</pre>
+            {% endguard %}
+        </twig:block>
+        <twig:block name="title">
+            <a href="{{ row.webUrl }}" target="_blank">
+                {{ row.fields.headline }}
+            </a>
+            <br />
+{#            {{ row.description }}#}
+            <hr />
+            <span class="danger">{{ row.sectionId }}</span>
+        </twig:block>
+
+    </twig:simple_datatables>
+{% endblock %}

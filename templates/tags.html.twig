@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+
+    {% set columns = [
+        'type',
+        'webTitle',
+    ] %}
+    <twig:simple_datatables
+            perPage="25"
+            :caller="_self"
+            :columns="columns"
+            :data="tags.results"
+    >
+        <twig:block name="webTitle">
+            <a href="{{ row.webUrl }}" target="_blank" title="{{ row.id }}">
+                {{ row.webTitle }}
+            </a>
+        </twig:block>
+
+    </twig:simple_datatables>
+{% endblock %}
