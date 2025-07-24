@@ -3,20 +3,16 @@
 namespace Survos\TheGuardianBundle\Command;
 
 use Survos\TheGuardianBundle\Service\TheGuardianService;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
-use Zenstruck\Console\Attribute\Argument;
-use Zenstruck\Console\Attribute\Option;
-use Zenstruck\Console\InvokableServiceCommand;
-use Zenstruck\Console\IO;
-use Zenstruck\Console\RunsCommands;
-use Zenstruck\Console\RunsProcesses;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand('guardian:list', 'list the-guardian sources and articles (various endpoints)')]
-final class TheGuardianListCommand extends InvokableServiceCommand
+final class TheGuardianListCommand extends Command
 {
-    use RunsCommands;
-    use RunsProcesses;
 
     public function __construct(
         private readonly TheGuardianService $theGuardianService,
@@ -26,7 +22,7 @@ final class TheGuardianListCommand extends InvokableServiceCommand
     }
 
     public function __invoke(
-        IO                                                                                          $io,
+        SymfonyStyle $io,
         #[Argument(description: 'endpoint (source, search)')] string        $endpoint='',
         #[Option(description: 'filter by top')] bool $top = false,
         #[Option(description: 'search string')] ?string $q=null,
